@@ -1,4 +1,4 @@
 images/test.jpg
 
 - weq
-![](images/test.jpg)
+![](.images/test.jpg)
