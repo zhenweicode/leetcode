@@ -66,5 +66,5 @@ leetcode 题解，记录自己的 leetcode 解题之路。
 
 
 # 参考
-[azl397985856/leetcode](https://github.com/azl397985856/leetcode)
-[互联网公司最常见的面试算法题有哪些？](https://www.zhihu.com/question/24964987/answer/586425979)
+- [azl397985856/leetcode](https://github.com/azl397985856/leetcode)
+- [互联网公司最常见的面试算法题有哪些？](https://www.zhihu.com/question/24964987/answer/586425979)
