@@ -1,4 +1,5 @@
 images/test.jpg
 
 - weq
-![](.images/test.jpg)
+
+![](https://github.com/zhenweicode/programming/blob/master/.images/test.jpg)
