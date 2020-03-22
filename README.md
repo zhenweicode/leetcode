@@ -39,7 +39,7 @@ leetcode 题解，记录自己的 leetcode 解题之路。
 
 
 ## 具体步骤
-对于遇到的每个题目，做上标记，题目难度（easy medium hard），是否经典（一般，好题，经典）。
+对于遇到的每个题目，做上标记，题目难度（easy medium hard），是否经典。
 此外，每个题目都分为以下几个步骤做好详细的笔记：
 1. 原题目
 2. 自己的第一遍解法
@@ -68,4 +68,3 @@ leetcode 题解，记录自己的 leetcode 解题之路。
 # 参考
 [azl397985856/leetcode](https://github.com/azl397985856/leetcode)
 [互联网公司最常见的面试算法题有哪些？](https://www.zhihu.com/question/24964987/answer/586425979)
-<img src="https://github.com/zhenweicode/programming/blob/master/.images/test.jpg" width="250" height="140">
