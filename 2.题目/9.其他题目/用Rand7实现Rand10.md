@@ -141,7 +141,7 @@ class Solution extends SolBase {
 ```
 
 执行发现时间确实降了：
-<img src="../../.images/2020/Jietu20200325-003818.jpg" width="250" height="150">
+<img src="../../.images/2020/Jietu20200325-003818.jpg" width="500" height="300">
 
 
 ## 复杂度
