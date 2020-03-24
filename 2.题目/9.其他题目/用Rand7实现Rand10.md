@@ -74,11 +74,55 @@ rand7()调用次数的 期望值 是多少 ?
 - 那么first+second为1,2,3,4,5,6,7,8,9,10的概率都相等=$\frac{3}{7}*\frac{1}{7}=\frac{3}{49}$
 
 ## 代码
-
+```Java
+class Solution extends SolBase {
+    public int rand10() {
+        int first = rand7();
+        int second = rand7();
+        while (first == 7)
+            first = rand7();
+        while (second > 5)
+            second = rand7();
+        return (first / 4 == 0 ? 0 : 5) + second;
+    }
+}
+```
 
 
 ## 复杂度
+我们来分析这种方法在平均情况下需要调用 Rand7() 的次数。我们称连续调用两次 Rand7() 为一轮，在第一轮中，有 40/49 的概率不被拒绝，而有 9/49 的概率被拒绝，进入第二轮。在第二轮中也是如此，因此调用 Rand7() 的期望次数为：
 
+\begin{aligned} E(\text{\# calls}) &= 2 + 2 \cdot \frac{9}{49} + 2 \cdot (\frac{9}{49})^2 + \cdots\\ &= 2 \sum_{n=0}^\infty (\frac{9}{49})^n\\ &= 2 \cdot \frac{1}{1 - \frac{9}{49}}\\ &=2.45 \end{aligned}
+
+
+# 解法1-拒绝采样2
+## 关键点
+我们可以用拒绝采样的方法实现 Rand10()。在拒绝采样中，如果生成的随机数满足要求，那么就返回该随机数，否则会不断生成直到一个满足要求的随机数为止。若我们调用两次 Rand7()，那么可以生成 [1, 49] 之间的随机整数，我们只用到其中的 40 个，用来实现 Rand10()，而拒绝剩下的 9 个数，如下图所示。
+<img src="../.images/2020/Jietu20200325-000903.jpg" width="250" height="140">
+
+我们来分析这种方法在平均情况下需要调用 Rand7() 的次数。我们称连续调用两次 Rand7() 为一轮，在第一轮中，有 40/49 的概率不被拒绝，而有 9/49 的概率被拒绝，进入第二轮。在第二轮中也是如此，因此调用 Rand7() 的期望次数为：
+
+$$\begin{aligned} E(\text{\# calls}) &= 2 + 2 \cdot \frac{9}{49} + 2 \cdot (\frac{9}{49})^2 + \cdots\\ &= 2 \sum_{n=0}^\infty (\frac{9}{49})^n\\ &= 2 \cdot \frac{1}{1 - \frac{9}{49}}\\ &=2.45 \end{aligned}$$
+
+## 代码
+```Java
+class Solution extends SolBase {
+    public int rand10() {
+        int row, col, idx;
+        do {
+            row = rand7();
+            col = rand7();
+            idx = col + (row - 1) * 7;
+        } while (idx > 40);
+        return 1 + (idx - 1) % 10;
+    }
+}
+```
+
+
+## 复杂度
+- 时间复杂度：期望时间复杂度为 O(1)，但最坏情况下会达到 $O(\infty)$（一直被拒绝）。
+- 空间复杂度：O(1)。
 
 
 # 扩展题目
