@@ -73,6 +73,10 @@ rand7()调用次数的 期望值 是多少 ?
 - second为1,2,3,4,5的概率都相等=$\frac{1}{7}$
 - 那么first+second为1,2,3,4,5,6,7,8,9,10的概率都相等=$\frac{3}{7}*\frac{1}{7}=\frac{3}{49}$
 
+问题:
+是否可以第一个[1-7]，第二个[1-3]之类的想法
+不可以，没办法凑成1，并且不等概率，比如2只能是1+1，但是3可以是1+2或者2+1
+
 ## 代码
 ```Java
 class Solution extends SolBase {
@@ -110,21 +114,43 @@ $$\begin{aligned} E(\text{\# calls}) &= 2 + 2 \cdot \frac{9}{49} + 2 \cdot (\fra
 ```Java
 class Solution extends SolBase {
     public int rand10() {
-        int row, col, idx;
-        do {
-            row = rand7();
-            col = rand7();
-            idx = col + (row - 1) * 7;
-        } while (idx > 40);
-        return 1 + (idx - 1) % 10;
+        int num = (rand7() - 1) * 7 + rand7();
+        while (num > 40)
+            num = (rand7() - 1) * 7 + rand7();
+        return 1 + num % 10;
     }
 }
 ```
+
+优化：
+更进一步，这时候我们舍弃了9个数，舍弃的还是有点多，效率还是不高，怎么提高效率呢？
+对于大于40的随机数，别舍弃呀，利用这9个数，我们再利用那个公式，(大于40的随机数 - 40 - 1) * 7 + rand7()(大于40的随机数−40−1)*7+rand7()，这样我们可以得到1-63之间的随机数，只要舍弃3个即可，那对于这三个舍弃的，还可以再来一轮，(大于60的随机数 - 60 - 1) * 7 + rand7()，这样我们可以得到1-21之间的随机数，只要舍弃一个即可。
+```Java
+class Solution extends SolBase {
+    public int rand10() {
+        while (true) {
+            int num = (rand7() - 1) * 7 + rand7();
+            if (num <= 40) return 1 + num % 10;    //如果在40以内，那就直接返回
+            num = (num - 40 - 1) * 7 + rand7();    //那说明刚才生成的在41-49之间，利用随机数再操作一遍
+            if (num <= 60) return 1 + num % 10;
+            num = (num - 60 - 1) * 7 + rand7();   //那说明刚才生成的在61-63之间，利用随机数再操作一遍
+            if (num <= 20) return 1 + num % 10;
+        }
+    }
+}
+```
+
+执行发现时间确实降了：
+<img src="../../.images/2020/Jietu20200325-003818.jpg" width="250" height="150">
 
 
 ## 复杂度
 - 时间复杂度：期望时间复杂度为 O(1)，但最坏情况下会达到 $O(\infty)$（一直被拒绝）。
 - 空间复杂度：O(1)。
+
+
+
+
 
 
 # 扩展题目
