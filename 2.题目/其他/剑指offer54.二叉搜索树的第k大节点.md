@@ -1,0 +1,150 @@
+# 目录
+* [题目地址](#题目地址)
+* [题目描述](#题目描述)
+* [解题思路](#解题思路)
+* [解法1-中序遍历](#解法1-中序遍历)
+* [解法2-中序遍历非递归(#解法2-中序遍历非递归)
+
+
+
+
+# 题目地址
+难易程度：
+- ![medium.jpg](../../.images/easy.jpg)
+
+是否经典：
+- ⭐️
+
+https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof/
+
+# 题目描述
+```$xslt
+给定一棵二叉搜索树，请找出其中第k大的节点。
+
+ 
+
+示例 1:
+
+输入: root = [3,1,4,null,2], k = 1
+   3
+  / \
+ 1   4
+  \
+   2
+输出: 4
+示例 2:
+
+输入: root = [5,3,6,2,4,null,null,1], k = 3
+       5
+      / \
+     3   6
+    / \
+   2   4
+  /
+ 1
+输出: 4
+ 
+
+限制：
+
+1 ≤ k ≤ 二叉搜索树元素个数
+```
+
+
+# 解题思路
+- 中序遍历
+
+
+# 解法1-中序遍历
+## 关键点
+二叉搜索树的中序遍历为 递增序列 。
+
+根据以上性质，易得二叉搜索树的 中序遍历倒序 为 递减序列 。
+因此，求 “二叉搜索树第 k 大的节点” 可转化为求 “此树的中序遍历倒序的第 k 个节点” 。
+
+
+中序遍历的倒序 为 “右、根、左” 顺序，递归法代码如下：
+
+题目指出：$1 \leq k \leq N$ （二叉搜索树节点个数）；因此无需考虑 k>N 的情况。
+若考虑，可以在中序遍历完成后判断 k>0 是否成立，若成立则说明 k>N 。
+
+## 代码
+```Java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ * int val;
+ * TreeNode left;
+ * TreeNode right;
+ * TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    int res, k;
+
+    public int kthLargest(TreeNode root, int k) {
+        this.k = k;
+        dfs(root);
+        return res;
+    }
+
+    void dfs(TreeNode root) {
+        if (root == null) return;
+        dfs(root.right);
+        if (k == 0) return;
+        if (--k == 0) res = root.val;
+        dfs(root.left);
+    }
+}
+```
+
+
+## 复杂度
+- 时间复杂度O(N) ： 当树退化为链表时（全部为右子节点），无论 k 的值大小，递归深度都为 N ，占用 O(N) 时间。
+- 空间复杂度O(N) ： 当树退化为链表时（全部为右子节点），系统使用 O(N) 大小的栈空间。
+
+
+# 解法2-中序遍历非递归
+## 关键点
+利用栈
+
+## 代码
+```Java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ * int val;
+ * TreeNode left;
+ * TreeNode right;
+ * TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public int kthLargest(TreeNode root, int k) {
+        int count = 1;
+        if (root != null) {
+            Stack<TreeNode> stack = new Stack<TreeNode>();
+            while (!stack.isEmpty() || root != null) {
+                if (root != null) {
+                    stack.push(root);
+                    root = root.right;
+                } else {
+                    root = stack.pop();
+                    if (count == k) {
+                        return root.val;
+                    }
+                    count++;
+                    root = root.left;
+                }
+            }
+        }
+
+        return 0;
+    }
+}
+```
+
+
+## 复杂度
+- 时间复杂度O(N) ： 最差遍历所有节点。
+- 空间复杂度O(N) ： 栈空间大小。
