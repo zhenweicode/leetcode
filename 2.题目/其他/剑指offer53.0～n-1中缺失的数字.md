@@ -50,7 +50,7 @@ https://leetcode-cn.com/problems/que-shi-de-shu-zi-lcof/
 
 缺失的数字等于 “右子数组的首位元素” 对应的索引；因此考虑使用二分法查找 “右子数组的首位元素” 。
 
-<img src="../.images/2020/Jietu20200404-154330.jpg" width="500" height="300">
+<img src="../../.images/2020/Jietu20200404-154330.jpg" width="500" height="300">
 
 跳出时，变量 low 和 high 分别指向 “右子数组的首位元素” 和 “左子数组的末位元素” 。因此返回 low 即可。
 ## 代码
