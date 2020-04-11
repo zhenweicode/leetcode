@@ -25,18 +25,39 @@ class Solution {
     }
 }
 
-class Solution {
-    HashSet<Integer> set = new HashSet<>();
+public class SubsetSumProblem {
+    public static void main(String[] srgs) {
+        int[] sets = {7, 34, 4, 12, 5, 3};
+        int sum = 87;
+        boolean isExistSubSet = subsetSumProblem(sets, sum);
+        System.out.println("集合" + Arrays.toString(sets) + "是否存在子集的和等于" + sum + ":" + isExistSubSet);
+    }
 
-    public boolean canReach(int[] arr, int start) {
-        if (start < 0 || start >= arr.length) {   // 判断下标是否合法
-            return false;
+    private static boolean subsetSumProblem(int[] arr, int sum) {
+        int row = arr.length + 1;
+        int col = sum + 1;
+        int[][] dp = new int[row][col];
+        dp[0][0] = 1;
+
+        for (int j = 1; j < col; j++) {
+            dp[0][j] = 0;
         }
-        if (arr[start] == 0) {         // 找到target 返回true
-            return true;
-        } else if (!set.add(start)) {
-            return false;            //表明当前位置已访问过，直接返回false
+
+        // 按行填充
+        for (int i = 1; i < row; i++) {
+            dp[i][0] = 1;
+            for (int j = 1; j < col; j++) {
+                dp[i][j] = dp[i - 1][j];
+
+                if (dp[i][j] != 1) {
+                    if (j - arr[i - 1] >= 0 && dp[i][j - arr[i - 1]] == 1) {
+                        dp[i][j] = dp[i][j - arr[i - 1]];
+                    } else {
+                        dp[i][j] = 0;
+                    }
+                }
+            }
         }
-        return canReach(arr, start + arr[start]) || canReach(arr, start - arr[start]);
+        return dp[row - 1][col - 1] == 1 ? true : false;
     }
 }
