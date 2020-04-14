@@ -1,42 +1,25 @@
 class Solution {
-    public static int[] lis1(int[] arr) {
-        if (arr == null || arr.length == 0) {
-            return null;
+    public static int minHP1(int[][] m) {
+        if (m == null || m.length == 0 || m[0] == null || m[0].length == 0) {
+            return 1;
         }
-        int[] dp = getdp1(arr);
-        return generateLIS(arr, dp);
-    }
-
-    public static int[] getdp1(int[] arr) {
-        int[] dp = new int[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            dp[i] = 1;
-            for (int j = 0; j < i; j++) {
-                if (arr[i] > arr[j]) {
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
-                }
+        int row = m.length;
+        int col = m[0].length;
+        int[][] dp = new int[row--][col--];
+        dp[row][col] = m[row][col] > 0 ? 1 : -m[row][col] + 1;
+        for (int j = col - 1; j >= 0; j--) {
+            dp[row][j] = Math.max(dp[row][j + 1] - m[row][j], 1);
+        }
+        int right = 0;
+        int down = 0;
+        for (int i = row - 1; i >= 0; i--) {
+            dp[i][col] = Math.max(dp[i + 1][col] - m[i][col], 1);
+            for (int j = col - 1; j >= 0; j--) {
+                right = Math.max(dp[i][j + 1] - m[i][j], 1);
+                down = Math.max(dp[i + 1][j] - m[i][j], 1);
+                dp[i][j] = Math.min(right, down);
             }
         }
-        return dp;
-    }
-
-    public static int[] generateLIS(int[] arr, int[] dp) {
-        int len = 0;
-        int index = 0;
-        for (int i = 0; i < dp.length; i++) {
-            if (dp[i] > len) {
-                len = dp[i];
-                index = i;
-            }
-        }
-        int[] lis = new int[len];
-        lis[--len] = arr[index];
-        for (int i = index; i >= 0; i--) {
-            if (arr[i] < arr[index] && dp[i] == dp[index] - 1) {
-                lis[--len] = arr[i];
-                index = i;
-            }
-        }
-        return lis;
+        return dp[0][0];
     }
 }
