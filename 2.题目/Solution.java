@@ -1,25 +1,25 @@
 class Solution {
-    public static int minHP1(int[][] m) {
-        if (m == null || m.length == 0 || m[0] == null || m[0].length == 0) {
-            return 1;
-        }
-        int row = m.length;
-        int col = m[0].length;
-        int[][] dp = new int[row--][col--];
-        dp[row][col] = m[row][col] > 0 ? 1 : -m[row][col] + 1;
-        for (int j = col - 1; j >= 0; j--) {
-            dp[row][j] = Math.max(dp[row][j + 1] - m[row][j], 1);
-        }
-        int right = 0;
-        int down = 0;
-        for (int i = row - 1; i >= 0; i--) {
-            dp[i][col] = Math.max(dp[i + 1][col] - m[i][col], 1);
-            for (int j = col - 1; j >= 0; j--) {
-                right = Math.max(dp[i][j + 1] - m[i][j], 1);
-                down = Math.max(dp[i + 1][j] - m[i][j], 1);
-                dp[i][j] = Math.min(right, down);
+    public String longestPalindrome(String s) {
+        if (s == null || s.length() < 1) return "";
+        int start = 0, end = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int len1 = expandAroundCenter(s, i, i);
+            int len2 = expandAroundCenter(s, i, i + 1);
+            int len = Math.max(len1, len2);
+            if (len > end - start) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
             }
         }
-        return dp[0][0];
+        return s.substring(start, end + 1);
+    }
+
+    private int expandAroundCenter(String s, int left, int right) {
+        int L = left, R = right;
+        while (L >= 0 && R < s.length() && s.charAt(L) == s.charAt(R)) {
+            L--;
+            R++;
+        }
+        return R - L - 1;
     }
 }
