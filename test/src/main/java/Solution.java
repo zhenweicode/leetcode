@@ -1,64 +1,104 @@
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- * int val;
- * ListNode next;
- * ListNode(int x) { val = x; }
- * }
- */
+import java.util.*;
+
 class Solution {
-    public ListNode sortList(ListNode head) {
-        // 1、递归结束条件
-        if (head == null || head.next == null) {
-            return head;
-        }
-
-        // 2、找到链表中间节点并断开链表 & 递归下探
-        ListNode midNode = middleNode(head);
-        ListNode rightHead = midNode.next;
-        midNode.next = null;
-
-        ListNode left = sortList(head);
-        ListNode right = sortList(rightHead);
-
-        // 3、当前层业务操作（合并有序链表）
-        return mergeTwoLists(left, right);
+    public int calculate(String s) {
+        String[] polish = getPolish(s); //转后缀表达式
+        return evalRPN(polish);
     }
 
-    //  找到链表中间节点（876. 链表的中间结点）
-    private ListNode middleNode(ListNode head) {
-        if (head == null || head.next == null) {
-            return head;
-        }
-        ListNode slow = head;
-        ListNode fast = head;
-
-        while (fast.next != null && fast.next.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
-        }
-
-        return slow;
-    }
-
-    // 合并两个有序链表（21. 合并两个有序链表）
-    private ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        ListNode sentry = new ListNode(-1);
-        ListNode curr = sentry;
-
-        while (l1 != null && l2 != null) {
-            if (l1.val < l2.val) {
-                curr.next = l1;
-                l1 = l1.next;
-            } else {
-                curr.next = l2;
-                l2 = l2.next;
+    //中缀表达式转后缀表达式
+    private String[] getPolish(String s) {
+        List<String> res = new ArrayList<>();
+        Stack<String> stack = new Stack<>();
+        char[] array = s.toCharArray();
+        int n = array.length;
+        int temp = -1; //累加数字，-1 表示当前没有数字
+        for (int i = 0; i < n; i++) {
+            if (array[i] == ' ') {
+                continue;
             }
+            //遇到数字
+            if (isNumber(array[i])) {
+                //进行数字的累加
+                if (temp == -1) {
+                    temp = array[i] - '0';
+                } else {
+                    temp = temp * 10 + array[i] - '0';
+                }
+            } else {
+                //遇到其它操作符，将数字加入到结果中
+                if (temp != -1) {
+                    res.add(temp + "");
+                    temp = -1;
+                }
+                if (isOperation(array[i] + "")) {
+                    //遇到操作符将栈中的操作符加入到结果中
+                    while (!stack.isEmpty()) {
+                        //遇到左括号结束
+                        if (stack.peek().equals("(")) {
+                            break;
+                        }
+                        res.add(stack.pop());
+                    }
+                    //当前操作符入栈
+                    stack.push(array[i] + "");
+                } else {
+                    //遇到左括号，直接入栈
+                    if (array[i] == '(') {
+                        stack.push(array[i] + "");
+                    }
+                    //遇到右括号，将出栈元素加入到结果中，直到遇到左括号
+                    if (array[i] == ')') {
+                        while (!stack.peek().equals("(")) {
+                            res.add(stack.pop());
+                        }
+                        //左括号出栈
+                        stack.pop();
+                    }
 
-            curr = curr.next;
+                }
+            }
         }
+        //如果有数字，将数字加入到结果
+        if (temp != -1) {
+            res.add(temp + "");
+        }
+        //栈中的其他元素加入到结果
+        while (!stack.isEmpty()) {
+            res.add(stack.pop());
+        }
+        String[] sArray = new String[res.size()];
+        //List 转为 数组
+        for (int i = 0; i < res.size(); i++) {
+            sArray[i] = res.get(i);
+        }
+        return sArray;
+    }
 
-        curr.next = l1 != null ? l1 : l2;
-        return sentry.next;
+    // 下边是 150 题的代码，求后缀表达式的值
+    public static int evalRPN(String[] tokens) {
+        int[] numStack = new int[tokens.length / 2 + 1];
+        int index = 0;
+        for (String s : tokens) {
+            switch (s) {
+                case "+":
+                    numStack[index - 2] += numStack[--index];
+                    break;
+                case "-":
+                    numStack[index - 2] -= numStack[--index];
+                    break;
+                case "*":
+                    numStack[index - 2] *= numStack[--index];
+                    break;
+                case "/":
+                    numStack[index - 2] /= numStack[--index];
+                    break;
+                default:
+                    // numStack[index++] = Integer.valueOf(s); valueOf改为parseInt，减少自动拆箱装箱操作
+                    numStack[index++] = Integer.parseInt(s);
+                    break;
+            }
+        }
+        return numStack[0];
     }
 }
