@@ -19,7 +19,7 @@ class Solution {
     }
 
     private static int dfs(String s, int[] i) {
-        Deque<Integer> stack = new LinkedList<>();
+        Stack<Integer> stack = new Stack<>();
 
         //记录某个连续的数，比如 "42"，那么我们首先 num = 4，然后遇到 2 ,num = num * 10 + 2 = 42
         int num = 0;
@@ -58,7 +58,7 @@ class Solution {
                 op = ch;
             }
             /*
-            遇到右括号，退出循环，然后计算结果， 返回上一层 dfs
+            遇到右括号，退出循环，然后计算结果，返回上一层 dfs
             这一步写在最后是因为，当 ch 为 右括号 时，那么我们需要先将前面已经得到的 num 压入栈中，再退出循环
             */
             if (ch == ')') {
