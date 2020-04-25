@@ -1,36 +1,18 @@
 import java.util.*;
 
 class Solution {
-    public ListNode reverseKGroup(ListNode head, int k) {
-        ListNode dummy = new ListNode(0);
-        dummy.next = head;
+    int countPrimes(int n) {
+        boolean[] isPrim = new boolean[n];
+        Arrays.fill(isPrim, true);
+        for (int i = 2; i * i < n; i++)
+            if (isPrim[i])
+                for (int j = i * i; j < n; j += i)
+                    isPrim[j] = false;
 
-        ListNode pre = dummy;
-        ListNode end = dummy;
+        int count = 0;
+        for (int i = 2; i < n; i++)
+            if (isPrim[i]) count++;
 
-        while (end.next != null) {
-            for (int i = 0; i < k && end != null; i++) end = end.next;
-            if (end == null) break;
-            ListNode start = pre.next;
-            ListNode next = end.next;
-            end.next = null;
-            pre.next = reverse(start);
-            start.next = next;
-            pre = start;
-            end = pre;
-        }
-        return dummy.next;
-    }
-
-    private ListNode reverse(ListNode head) {
-        ListNode pre = null;
-        ListNode curr = head;
-        while (curr != null) {
-            ListNode next = curr.next;
-            curr.next = pre;
-            pre = curr;
-            curr = next;
-        }
-        return pre;
+        return count;
     }
 }
