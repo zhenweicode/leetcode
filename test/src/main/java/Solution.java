@@ -1,57 +1,44 @@
 class Solution {
-    private StringBuilder trimSpaces(String s) {
-        int left = 0, right = s.length() - 1;
-        // 去掉字符串开头的空白字符
-        while (left <= right && s.charAt(left) == ' ') ++left;
-
-        // 去掉字符串末尾的空白字符
-        while (left <= right && s.charAt(right) == ' ') --right;
-
-        // 将字符串间多余的空白字符去除
-        StringBuilder sb = new StringBuilder();
-        while (left <= right) {
-            char c = s.charAt(left);
-
-            if (c != ' ') sb.append(c);
-            else if (sb.charAt(sb.length() - 1) != ' ') sb.append(c);
-
-            ++left;
+    public int[] searchRange(int[] nums, int target) {
+        if(nums == null || nums.length == 0 || target < nums[0] || target > nums[nums.length - 1]){
+            return new int[]{-1, -1};
         }
-        return sb;
+
+        int high = nums.length - 1;
+        int low = 0;
+        int mid = 0;
+        while(low <= high){
+            mid = low + (high - low) / 2;
+            if(target == nums[mid]){
+                return findTarget(nums, target, mid);
+            } else if(target > nums[mid]){
+                low = mid + 1;
+            } else{
+                high = mid - 1;
+            }
+        }
+
+        return new int[]{-1, -1};
     }
 
-    private void reverse(StringBuilder sb, int left, int right) {
-        while (left < right) {
-            char tmp = sb.charAt(left);
-            sb.setCharAt(left++, sb.charAt(right));
-            sb.setCharAt(right--, tmp);
+    private int[] findTarget(int[] nums, int target, int mid){
+        int low = mid;
+        int high = mid;
+        int[] res = new int[]{mid, mid};
+        while(low >= 0 && nums[low] == target){
+            res[0] = low;
+            low--;
         }
+
+        while(high < nums.length && nums[high] == target){
+            res[1] = high;
+            high++;
+        }
+
+        return res;
     }
 
-    private void reverseEachWord(StringBuilder sb) {
-        int n = sb.length();
-        int start = 0, end = 0;
-
-        while (start < n) {
-            // 循环至单词的末尾
-            while (end < n && sb.charAt(end) != ' ') ++end;
-            // 翻转单词
-            reverse(sb, start, end - 1);
-            // 更新start，去找下一个单词
-            start = end + 1;
-            ++end;
-        }
-    }
-
-    public String reverseWords(String s) {
-        StringBuilder sb = trimSpaces(s);
-
-        // 翻转字符串
-        reverse(sb, 0, sb.length() - 1);
-
-        // 翻转每个单词
-        reverseEachWord(sb);
-
-        return sb.toString();
+    public static void main(String[] args) {
+        new Solution().searchRange(new int[]{5,7,7,8,8,10}, 8);
     }
 }
