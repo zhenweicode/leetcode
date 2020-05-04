@@ -1,44 +1,52 @@
 class Solution {
-    public int[] searchRange(int[] nums, int target) {
-        if(nums == null || nums.length == 0 || target < nums[0] || target > nums[nums.length - 1]){
-            return new int[]{-1, -1};
-        }
-
-        int high = nums.length - 1;
-        int low = 0;
-        int mid = 0;
-        while(low <= high){
-            mid = low + (high - low) / 2;
-            if(target == nums[mid]){
-                return findTarget(nums, target, mid);
-            } else if(target > nums[mid]){
-                low = mid + 1;
-            } else{
-                high = mid - 1;
+    int left_bound(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            } else if (nums[mid] == target) {
+                // 别返回，锁定左侧边界
+                right = mid - 1;
             }
         }
-
-        return new int[]{-1, -1};
+        // 最后要检查 left 越界的情况
+        if (left >= nums.length || nums[left] != target)
+            return -1;
+        return left;
     }
 
-    private int[] findTarget(int[] nums, int target, int mid){
-        int low = mid;
-        int high = mid;
-        int[] res = new int[]{mid, mid};
-        while(low >= 0 && nums[low] == target){
-            res[0] = low;
-            low--;
-        }
 
-        while(high < nums.length && nums[high] == target){
-            res[1] = high;
-            high++;
+    int right_bound(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            } else if (nums[mid] == target) {
+                // 别返回，锁定右侧边界
+                left = mid + 1;
+            }
         }
+        // 最后要检查 right 越界的情况
+        if (right < 0 || nums[right] != target)
+            return -1;
+        return right;
+    }
 
-        return res;
+
+    public int[] searchRange(int[] nums, int target) {
+        int[] targetRange = {-1, -1};
+        targetRange[0] = left_bound(nums, target);
+        targetRange[1] = right_bound(nums, target);
+        return targetRange;
     }
 
     public static void main(String[] args) {
-        new Solution().searchRange(new int[]{5,7,7,8,8,10}, 8);
+        new Solution().searchRange(new int[]{5, 7, 7, 8, 8, 10}, 8);
     }
 }
