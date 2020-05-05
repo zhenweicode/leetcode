@@ -1,43 +1,39 @@
 import java.util.*;
 
-public class Solution {
-    public List<String> generateParenthesis(int n) {
-        List<String> res = new ArrayList<>();
-        // 特判
-        if (n == 0) {
-            return res;
-        }
+public class Trie {
+    private boolean is_string = false;
+    private Trie[] next = new Trie[26];
 
-        // 执行深度优先遍历，搜索可能的结果
-        dfs("", n, n, res);
-        return res;
+    public Trie() {
     }
 
-    /**
-     * @param curStr 当前递归得到的结果
-     * @param left   左括号还有几个可以使用
-     * @param right  右括号还有几个可以使用
-     * @param res    结果集
-     */
-    private void dfs(String curStr, int left, int right, List<String> res) {
-        // 因为每一次尝试，都使用新的字符串变量，所以无需回溯
-        // 在递归终止的时候，直接把它添加到结果集即可，注意与「力扣」第 46 题、第 39 题区分
-        if (left == 0 && right == 0) {
-            res.add(curStr);
-            return;
+    public void insert(String word) {//插入单词
+        Trie root = this;
+        char[] w = word.toCharArray();
+        for (int i = 0; i < w.length; ++i) {
+            if (root.next[w[i] - 'a'] == null) root.next[w[i] - 'a'] = new Trie();
+            root = root.next[w[i] - 'a'];
         }
+        root.is_string = true;
+    }
 
-        // 剪枝（如图，左括号可以使用的个数严格大于右括号可以使用的个数，才剪枝，注意这个细节）
-        if (left > right) {
-            return;
+    public boolean search(String word) {//查找单词
+        Trie root = this;
+        char w[] = word.toCharArray();
+        for (int i = 0; i < w.length; ++i) {
+            if (root.next[w[i] - 'a'] == null) return false;
+            root = root.next[w[i] - 'a'];
         }
+        return root.is_string;
+    }
 
-        if (left > 0) {
-            dfs(curStr + "(", left - 1, right, res);
+    public boolean startsWith(String prefix) {//查找前缀
+        Trie root = this;
+        char p[] = prefix.toCharArray();
+        for (int i = 0; i < p.length; ++i) {
+            if (root.next[p[i] - 'a'] == null) return false;
+            root = root.next[p[i] - 'a'];
         }
-
-        if (right > 0) {
-            dfs(curStr + ")", left, right - 1, res);
-        }
+        return true;
     }
 }
