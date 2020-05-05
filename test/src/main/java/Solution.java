@@ -1,43 +1,33 @@
 import java.util.*;
 
-class Solution {
-    // 观察规律可知，遍历方向由层数决定，而层数即为横纵坐标之和。故而可以得出解答
-    public int[] findDiagonalOrder(int[][] matrix) {
-        if (matrix == null || matrix.length == 0) {
-            return new int[]{};
+public class Solution {
+    public void nextPermutation(int[] nums) {
+        int i = nums.length - 2;
+        while (i >= 0 && nums[i + 1] <= nums[i]) {
+            i--;
         }
-        int r = 0, c = 0;
-        int row = matrix.length, col = matrix[0].length;
-        int[] res = new int[row * col];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = matrix[r][c];
-            // r + c 即为遍历的层数，偶数向上遍历，奇数向下遍历
-            if ((r + c) % 2 == 0) {
-                if (c == col - 1) {
-                    // 往下移动一格准备向下遍历
-                    r++;
-                } else if (r == 0) {
-                    // 往右移动一格准备向下遍历
-                    c++;
-                } else {
-                    // 往上移动
-                    r--;
-                    c++;
-                }
-            } else {
-                if (r == row - 1) {
-                    // 往右移动一格准备向上遍历
-                    c++;
-                } else if (c == 0) {
-                    // 往下移动一格准备向上遍历
-                    r++;
-                } else {
-                    // 往下移动
-                    r++;
-                    c--;
-                }
+        if (i >= 0) {
+            int j = nums.length - 1;
+            while (j >= 0 && nums[j] <= nums[i]) {
+                j--;
             }
+            swap(nums, i, j);
         }
-        return res;
+        reverse(nums, i + 1);
+    }
+
+    private void reverse(int[] nums, int start) {
+        int i = start, j = nums.length - 1;
+        while (i < j) {
+            swap(nums, i, j);
+            i++;
+            j--;
+        }
+    }
+
+    private void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
     }
 }
