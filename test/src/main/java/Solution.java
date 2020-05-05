@@ -14,6 +14,8 @@ public class Solution {
                     break;
                 }
             }
+
+            "123".trim();
         }
         return dp[s.length()];
     }
