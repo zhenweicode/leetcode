@@ -1,17 +1,20 @@
-class Solution {
-    public static int reverse(int x) {
-        int ans = 0;
-        while (x != 0) {
-            int pop = x % 10;
-            if (ans > Integer.MAX_VALUE / 10 || ans < Integer.MIN_VALUE / 10)
-                return 0;
-            ans = ans * 10 + pop;
-            x /= 10;
-        }
-        return ans;
-    }
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-    public static void main(String[] args) {
-        reverse(Integer.MIN_VALUE);
+public class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        Set<String> wordDictSet = new HashSet<>(wordDict);
+        boolean[] dp = new boolean[s.length() + 1];
+        dp[0] = true;
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = 0; j < i; j++) {
+                if (dp[j] && wordDictSet.contains(s.substring(j, i))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        return dp[s.length()];
     }
 }
