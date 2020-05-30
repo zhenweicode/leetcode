@@ -1,29 +1,41 @@
 import java.util.*;
 
 class Solution {
-    public int divide(int dividend, int divisor) { // 被除数 除数
-        if (divisor == -1 && dividend == Integer.MIN_VALUE) return Integer.MAX_VALUE; // 溢出
-        int sign = 1;
-        if ((dividend > 0 && divisor < 0) || (dividend < 0 && divisor > 0))
-            sign = -1;
-        if (divisor == 1) return dividend;
-        if (divisor == -1) return -dividend;
-        int a = dividend > 0 ? -dividend : dividend;
-        int b = divisor > 0 ? -divisor : divisor;
-        // 都改为负号是因为int 的范围是[2^32, 2^32-1]，如果a是-2^32，转为正数时将会溢出
-        if (a > b) return 0;
-        int ans = div(a, b);
-        return sign == -1 ? -ans : ans;
-    }
-
-    private int div(int a, int b) {
-        if (a > b) return 0;
-        int count = 1;
-        int tb = b;
-        while (tb + tb >= a && tb + tb < 0) { // 溢出之后不再小于0
-            tb += tb;
-            count += count;
+    public List<Integer> findSubstring(String s, String[] words) {
+        List<Integer> res = new ArrayList<>();
+        if (s == null || s.length() == 0 || words == null || words.length == 0) return res;
+        HashMap<String, Integer> map = new HashMap<>();
+        int one_word = words[0].length();
+        int word_num = words.length;
+        for (String word : words) {
+            map.put(word, map.getOrDefault(word, 0) + 1);
         }
-        return count + div(a - tb, b);
+
+        // 只讨论从0，1，...， oneLen-1 开始的子串情况，每次移动一个单词长度，这样能复用已经判断的结果
+        for (int i = 0; i < one_word; i++) {
+            int left = i, right = i, count = 0;
+            HashMap<String, Integer> tmp_map = new HashMap<>();
+            while (right + one_word <= s.length()) {
+                String w = s.substring(right, right + one_word);
+                right += one_word;
+                if (!map.containsKey(w)) {
+                    count = 0;
+                    left = right;
+                    tmp_map.clear();
+                } else {
+                    tmp_map.put(w, tmp_map.getOrDefault(w, 0) + 1);
+                    count++;
+                    // 如果符合过多，需要移除
+                    while (tmp_map.getOrDefault(w, 0) > map.getOrDefault(w, 0)) {
+                        String t_w = s.substring(left, left + one_word);
+                        count--;
+                        tmp_map.put(t_w, tmp_map.getOrDefault(t_w, 0) - 1);
+                        left += one_word;
+                    }
+                    if (count == word_num) res.add(left);
+                }
+            }
+        }
+        return res;
     }
 }
