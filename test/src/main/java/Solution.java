@@ -1,19 +1,23 @@
 import java.util.*;
 
 class Solution {
-    public void delDup2(Node head) {
-        Node p = head;
-        Node q = null;
-        while (p != null) {
-            q = p;
-            while (q.next != null) {
-                if (p.val == q.next.val) {
-                    q.next = q.next.next;
-                } else {
-                    q = q.next;
-                }
-            }
-            p = p.next;
+    public boolean isValid(String s) {
+        if (s == null || s.length() == 0 || (s.length() % 2 != 0)) {
+            return false;
         }
+
+        Stack<Character> stack = new Stack<>();
+        for (Character c : s.toCharArray()) {
+            if (c == '(' || c == '{' || c == '[') {
+                stack.push(c);
+            } else if (stack.size() > 0 && (
+                    (c == ')' && stack.pop() == '(') || (c == '}' && stack.pop() == '{') || (c == ']' && stack.pop() == '['))) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+
+        return stack.size() == 0;
     }
 }
