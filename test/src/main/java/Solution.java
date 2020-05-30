@@ -1,34 +1,38 @@
 import java.util.*;
 
 class Solution {
-    public ListNode rotateRight(ListNode head, int k) {
-        // base cases
-        if (head == null || k <= 0 || head.next == null) {
-            return head;
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        int row = obstacleGrid.length;
+        int column = obstacleGrid[0].length;
+
+        // 开始路径有障碍物
+        if (obstacleGrid[0][0] == 1) {
+            return 0;
         }
 
-        // 连接成环
-        ListNode old_tail = head;
-        int n;  // 链表长度
-        for (n = 1; old_tail.next != null; n++)
-            old_tail = old_tail.next;
-        old_tail.next = head;
+        // 起始位置
+        obstacleGrid[0][0] = 1;
 
-        // 新的头节点：(n - k % n)th node
-        // 新的尾结点：(n - k % n - 1)th node
-        ListNode new_tail = head;
-        for (int i = 0; i < n - k % n - 1; i++)
-            new_tail = new_tail.next;
-        ListNode new_head = new_tail.next;
+        // 填充第一列
+        for (int i = 1; i < row; i++) {
+            obstacleGrid[i][0] = (obstacleGrid[i][0] == 0 && obstacleGrid[i - 1][0] == 1) ? 1 : 0;
+        }
 
-        // break the ring
-        new_tail.next = null;
+        // 填充第一行
+        for (int i = 1; i < column; i++) {
+            obstacleGrid[0][i] = (obstacleGrid[0][i] == 0 && obstacleGrid[0][i - 1] == 1) ? 1 : 0;
+        }
 
-        return new_head;
+        for (int i = 1; i < row; i++) {
+            for (int j = 1; j < column; j++) {
+                if (obstacleGrid[i][j] == 0) {
+                    obstacleGrid[i][j] = obstacleGrid[i - 1][j] + obstacleGrid[i][j - 1];
+                } else {
+                    obstacleGrid[i][j] = 0;
+                }
+            }
+        }
+
+        return obstacleGrid[row - 1][column - 1];
     }
 }
-
-作者：LeetCode
-        链接：https://leetcode-cn.com/problems/rotate-list/solution/xuan-zhuan-lian-biao-by-leetcode/
-        来源：力扣（LeetCode）
-        著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
