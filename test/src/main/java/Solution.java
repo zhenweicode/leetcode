@@ -1,27 +1,45 @@
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class Solution {
-
-    public String intToRoman(int num) {
-        // 把阿拉伯数字与罗马数字可能出现的所有情况和对应关系，放在两个数组中
-        // 并且按照阿拉伯数字的大小降序排列，这是贪心选择思想
-        int[] nums = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-        String[] romans = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-
-        StringBuilder stringBuilder = new StringBuilder();
-        int index = 0;
-        while (index < 13) {
-            // 特别注意：这里是等号
-            while (num >= nums[index]) {
-                // 注意：这里是等于号，表示尽量使用大的"面值"
-                stringBuilder.append(romans[index]);
-                num -= nums[index];
-            }
-            index++;
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new LinkedList<>();
+        if (digits == null || digits.length() == 0) {
+            return res;
         }
-        return stringBuilder.toString();
+
+        Map<Character, String> map = new HashMap<>();
+        map.put('2', "abc");
+        map.put('3', "def");
+        map.put('4', "ghi");
+        map.put('5', "jkl");
+        map.put('6', "mno");
+        map.put('7', "pqrs");
+        map.put('8', "tuv");
+        map.put('9', "wxyz");
+
+        getCombinations(0, digits, res, map, new ArrayList<>(digits.length()));
+        return res;
+    }
+
+    private void getCombinations(int start, String digits, List<String> res, Map<Character, String> map, List<Character> temp) {
+        if (start == digits.length()) {
+            res.add(getString(temp));
+            return;
+        }
+
+        for (char c : map.get(digits.charAt(start)).toCharArray()) {
+            temp.add(c);
+            getCombinations(start + 1, digits, res, map, temp);
+            temp.remove(temp.size() - 1);
+        }
+    }
+
+    private String getString(List<Character> temp) {
+        String result = "";
+        for (char c : temp) {
+            result = result + c;
+        }
+
+        return result;
     }
 }
