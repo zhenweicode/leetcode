@@ -1,23 +1,20 @@
 import java.util.*;
 
 class Solution {
-    public boolean isValid(String s) {
-        if (s == null || s.length() == 0 || (s.length() % 2 != 0)) {
-            return false;
+    public ListNode swapPairs(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode temp = dummy;
+        while (temp.next != null && temp.next.next != null) {
+            ListNode first = temp.next;
+            ListNode second = first.next;
+            ListNode third = second.next;
+            second.next = first;
+            first.next = third;
+            temp.next = second;
+            temp = first; // 翻转之后，first后面是third
         }
 
-        Stack<Character> stack = new Stack<>();
-        for (Character c : s.toCharArray()) {
-            if (c == '(' || c == '{' || c == '[') {
-                stack.push(c);
-            } else if (stack.size() > 0 && (
-                    (c == ')' && stack.pop() == '(') || (c == '}' && stack.pop() == '{') || (c == ']' && stack.pop() == '['))) {
-                continue;
-            } else {
-                return false;
-            }
-        }
-
-        return stack.size() == 0;
+        return dummy.next;
     }
 }
