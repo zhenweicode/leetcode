@@ -1,14 +1,23 @@
 import java.util.*;
 
 class Solution {
-    public List<Integer> findDuplicates(int[] nums) {
-        List<Integer> res = new ArrayList<>();
-        for (int i = 0; i < nums.length; ++i) {
-            int index = Math.abs(nums[i]) - 1;
-            if (nums[index] < 0)
-                res.add(Math.abs(index + 1));
-            nums[index] = -nums[index];
+    public int trap(int[] height) {
+        int sum = 0;
+        int max_left = 0;
+        int max_right = 0;
+        int left = 0;
+        int right = height.length - 1; // 加右指针进去
+        while (left <= right) {
+            if (max_left < max_right) {
+                sum += Math.max(0, max_left - height[left]);
+                max_left = Math.max(max_left, height[left]);
+                left++;
+            } else {
+                sum += Math.max(0, max_right - height[right]);
+                max_right = Math.max(max_right, height[right]);
+                right--;
+            }
         }
-        return res;
+        return sum;
     }
 }
