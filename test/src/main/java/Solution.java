@@ -1,16 +1,19 @@
 import java.util.*;
 
 class Solution {
-    public Node findMidNode(Node head) {
-        if (head == null) {
-            return null;
+    public void delDup2(Node head) {
+        Node p = head;
+        Node q = null;
+        while (p != null) {
+            q = p;
+            while (q.next != null) {
+                if (p.val == q.next.val) {
+                    q.next = q.next.next;
+                } else {
+                    q = q.next;
+                }
+            }
+            p = p.next;
         }
-        Node first = head;
-        Node second = head;
-        while (second.next != null && second.next.next != null) { //如果判断second != null && second.next != null，会1,2,3,4,5,6的中点为4
-            first = first.next;
-            second = second.next.next;
-        }
-        return first;
     }
 }
