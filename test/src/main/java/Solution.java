@@ -1,23 +1,47 @@
 import java.util.*;
 
 class Solution {
-    public List<List<String>> groupAnagrams(String[] strs) {
-        if (strs.length == 0) return new ArrayList<>();
-        Map<String, List<String>> ans = new HashMap<>();
-        int[] count = new int[26];
-        for (String s : strs) {
-            Arrays.fill(count, 0);
-            for (char c : s.toCharArray()) count[c - 'a']++;
+    public int[][] generateMatrix(int n) {
+        int[][] matrix = new int[n][n];
+        int tR = 0;
+        int tC = 0;
+        int dR = n - 1;
+        int dC = n - 1;
 
-            StringBuilder sb = new StringBuilder("");
-            for (int i = 0; i < 26; i++) {
-                sb.append('#');
-                sb.append(count[i]);
-            }
-            String key = sb.toString();
-            if (!ans.containsKey(key)) ans.put(key, new ArrayList<>());
-            ans.get(key).add(s);
+        int[] sum = new int[]{1};
+        while (tR <= dR && tC <= dC) {
+            getEdge(matrix, tR++, tC++, dR--, dC--, sum);
         }
-        return new ArrayList<>(ans.values());
+
+        return matrix;
+    }
+
+    public static void getEdge(int[][] m, int tR, int tC, int dR, int dC, int[] sum) {
+        if (tR == dR) {
+            m[tR][tC] = sum[0]++;
+        } else {
+            int curC = tC;
+            int curR = tR;
+            while (curC != dC) {
+                m[tR][curC] =sum[0]++;
+                curC++;
+            }
+            while (curR != dR) {
+                m[curR][dC] = sum[0]++;
+                curR++;
+            }
+            while (curC != tC) {
+                m[dR][curC] = sum[0]++;
+                curC--;
+            }
+            while (curR != tR) {
+                m[curR][tC] = sum[0]++;
+                curR--;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new Solution().generateMatrix(3);
     }
 }
