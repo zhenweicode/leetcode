@@ -1,23 +1,23 @@
 import java.util.*;
 
 class Solution {
-    public int trap(int[] height) {
-        int sum = 0;
-        int max_left = 0;
-        int max_right = 0;
-        int left = 0;
-        int right = height.length - 1; // 加右指针进去
-        while (left <= right) {
-            if (max_left < max_right) {
-                sum += Math.max(0, max_left - height[left]);
-                max_left = Math.max(max_left, height[left]);
-                left++;
-            } else {
-                sum += Math.max(0, max_right - height[right]);
-                max_right = Math.max(max_right, height[right]);
-                right--;
+    public List<List<String>> groupAnagrams(String[] strs) {
+        if (strs.length == 0) return new ArrayList<>();
+        Map<String, List<String>> ans = new HashMap<>();
+        int[] count = new int[26];
+        for (String s : strs) {
+            Arrays.fill(count, 0);
+            for (char c : s.toCharArray()) count[c - 'a']++;
+
+            StringBuilder sb = new StringBuilder("");
+            for (int i = 0; i < 26; i++) {
+                sb.append('#');
+                sb.append(count[i]);
             }
+            String key = sb.toString();
+            if (!ans.containsKey(key)) ans.put(key, new ArrayList<>());
+            ans.get(key).add(s);
         }
-        return sum;
+        return new ArrayList<>(ans.values());
     }
 }
