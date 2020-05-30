@@ -1,43 +1,34 @@
 import java.util.*;
 
 class Solution {
-    public String getPermutation(int n, int k) {
-        boolean[] visited = new boolean[n];
-        // 将 n! 种排列分为：n 组，每组有 (n - 1)! 种排列
-        return recursive(n, factorial(n - 1), k, visited);
-    }
-
-    /**
-     * @param n 剩余的数字个数，递减
-     * @param f 每组的排列个数
-     */
-    private String recursive(int n, int f, int k, boolean[] visited) {
-        int offset = k % f;// 组内偏移量
-        // 第几组，offset=0表示这一组最后一个，offset>0表示下一组第offset个
-        int groupIndex = k / f + (offset > 0 ? 1 : 0);
-        // 在没有被访问的数字里找第 groupIndex 个数字
-        int i = 0;
-        for (; i < visited.length && groupIndex > 0; i++) {
-            if (!visited[i]) {
-                groupIndex--;
-            }
+    public ListNode rotateRight(ListNode head, int k) {
+        // base cases
+        if (head == null || k <= 0 || head.next == null) {
+            return head;
         }
 
-        if (i >= 1) visited[i - 1] = true;  // 标记为已访问
-        if (n == 1) return String.valueOf(i);  // 最后一数字
+        // 连接成环
+        ListNode old_tail = head;
+        int n;  // 链表长度
+        for (n = 1; old_tail.next != null; n++)
+            old_tail = old_tail.next;
+        old_tail.next = head;
 
-        // offset = 0 时，则取第 i 组的第 f 个排列，否则取第 i 组的第 offset 个排列（i在未整除时已经+1）
-        return String.valueOf(i) + recursive(n - 1, f / (n - 1), offset == 0 ? f : offset, visited);
-    }
+        // 新的头节点：(n - k % n)th node
+        // 新的尾结点：(n - k % n - 1)th node
+        ListNode new_tail = head;
+        for (int i = 0; i < n - k % n - 1; i++)
+            new_tail = new_tail.next;
+        ListNode new_head = new_tail.next;
 
-    /**
-     * 求 n!
-     */
-    private int factorial(int n) {
-        int res = 1;
-        for (int i = n; i > 1; i--) {
-            res *= i;
-        }
-        return res;
+        // break the ring
+        new_tail.next = null;
+
+        return new_head;
     }
 }
+
+作者：LeetCode
+        链接：https://leetcode-cn.com/problems/rotate-list/solution/xuan-zhuan-lian-biao-by-leetcode/
+        来源：力扣（LeetCode）
+        著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
