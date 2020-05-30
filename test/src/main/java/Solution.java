@@ -1,47 +1,43 @@
 import java.util.*;
 
 class Solution {
-    public int[][] generateMatrix(int n) {
-        int[][] matrix = new int[n][n];
-        int tR = 0;
-        int tC = 0;
-        int dR = n - 1;
-        int dC = n - 1;
-
-        int[] sum = new int[]{1};
-        while (tR <= dR && tC <= dC) {
-            getEdge(matrix, tR++, tC++, dR--, dC--, sum);
-        }
-
-        return matrix;
+    public String getPermutation(int n, int k) {
+        boolean[] visited = new boolean[n];
+        // 将 n! 种排列分为：n 组，每组有 (n - 1)! 种排列
+        return recursive(n, factorial(n - 1), k, visited);
     }
 
-    public static void getEdge(int[][] m, int tR, int tC, int dR, int dC, int[] sum) {
-        if (tR == dR) {
-            m[tR][tC] = sum[0]++;
-        } else {
-            int curC = tC;
-            int curR = tR;
-            while (curC != dC) {
-                m[tR][curC] =sum[0]++;
-                curC++;
-            }
-            while (curR != dR) {
-                m[curR][dC] = sum[0]++;
-                curR++;
-            }
-            while (curC != tC) {
-                m[dR][curC] = sum[0]++;
-                curC--;
-            }
-            while (curR != tR) {
-                m[curR][tC] = sum[0]++;
-                curR--;
+    /**
+     * @param n 剩余的数字个数，递减
+     * @param f 每组的排列个数
+     */
+    private String recursive(int n, int f, int k, boolean[] visited) {
+        int offset = k % f;// 组内偏移量
+        // 第几组，offset=0表示这一组最后一个，offset>0表示下一组第offset个
+        int groupIndex = k / f + (offset > 0 ? 1 : 0);
+        // 在没有被访问的数字里找第 groupIndex 个数字
+        int i = 0;
+        for (; i < visited.length && groupIndex > 0; i++) {
+            if (!visited[i]) {
+                groupIndex--;
             }
         }
+
+        if (i >= 1) visited[i - 1] = true;  // 标记为已访问
+        if (n == 1) return String.valueOf(i);  // 最后一数字
+
+        // offset = 0 时，则取第 i 组的第 f 个排列，否则取第 i 组的第 offset 个排列（i在未整除时已经+1）
+        return String.valueOf(i) + recursive(n - 1, f / (n - 1), offset == 0 ? f : offset, visited);
     }
 
-    public static void main(String[] args) {
-        new Solution().generateMatrix(3);
+    /**
+     * 求 n!
+     */
+    private int factorial(int n) {
+        int res = 1;
+        for (int i = n; i > 1; i--) {
+            res *= i;
+        }
+        return res;
     }
 }
