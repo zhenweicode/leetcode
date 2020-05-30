@@ -1,23 +1,15 @@
 import java.util.*;
 
 class Solution {
-    public Node findLastNode2(Node head, int k) {
-        if (k == 0 || head == null) {
+    public Node findMidNode(Node head) {
+        if (head == null) {
             return null;
         }
         Node first = head;
         Node second = head;
-        for (int i = 0; i < k - 1; i++) {
-            second = second.next;
-            if (second == null) { // 说明k的值已经大于链表的长度了
-                // throw new NullPointerException("链表的长度小于" + k);
-                return null;
-            }
-        }
-
-        while (second.next != null) {
+        while (second.next != null && second.next.next != null) { //如果判断second != null && second.next != null，会1,2,3,4,5,6的中点为4
             first = first.next;
-            second = second.next;
+            second = second.next.next;
         }
         return first;
     }
