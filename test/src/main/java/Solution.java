@@ -1,22 +1,24 @@
 import java.util.*;
 
 class Solution {
-    public TreeNode sortedArrayToBST(int[] nums) {
-        if (nums == null) {
-            return null;
+    public TreeNode sortedListToBST(ListNode head) {
+        if (head == null) return null;
+        if (head.next == null) return new TreeNode(head.val);
+        ListNode pre = head;
+        ListNode p = pre.next;
+        ListNode q = p.next;
+        //找到链表的中点p
+        while (q != null && q.next != null) {
+            pre = pre.next;
+            p = pre.next;
+            q = q.next.next;
         }
 
-        return generate(nums, 0, nums.length - 1);
-    }
-
-    private static TreeNode generate(int[] nums, int start, int end) {
-        if (start > end) {
-            return null;
-        }
-        int mid = (start + end) / 2;
-        TreeNode head = new TreeNode(nums[mid]);
-        head.left = generate(nums, start, mid - 1);
-        head.right = generate(nums, mid + 1, end);
-        return head;
+        // 将中点左边的链表分开
+        pre.next = null;
+        TreeNode root = new TreeNode(p.val);
+        root.left = sortedListToBST(head);
+        root.right = sortedListToBST(p.next);
+        return root;
     }
 }
