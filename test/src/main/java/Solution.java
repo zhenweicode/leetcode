@@ -1,41 +1,25 @@
 import java.util.*;
 
 class Solution {
-    public boolean search(int[] nums, int target) {
-        if (nums == null || nums.length == 0) {
-            return false;
-        }
-        int start = 0;
-        int end = nums.length - 1;
-        int mid;
-        while (start <= end) {
-            mid = start + (end - start) / 2;  // 这么写是为了防止两个数相加超过Integer.MAX_VALUE,专业点的一般都这么写
-            if (nums[mid] == target) {
-                return true;
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode slow = dummy, fast = head;
+        boolean repeat = false;  // 是否重复
+        while (slow.next != null) {
+            while (fast.next != null && fast.next.val == slow.next.val) {
+                fast = fast.next;
+                repeat = true;//如果有重复节点
             }
-
-            if (nums[start] == nums[mid]) {
-                start++;
-                continue;
-            }
-
-            //前半部分有序,注意此处用小于等于,如果nums只有两个数，start和mid就相同了，不加等号结果会出错
-            if (nums[start] <= nums[mid]) {
-                //target在前半部分
-                if (target >= nums[start] && target < nums[mid]) {
-                    end = mid - 1;
-                } else {
-                    start = mid + 1;
-                }
+            if (repeat) {
+                slow.next = fast.next;//删掉重复节点
+                fast = fast.next;//再指针后移！！这时候slow不用动！
+                repeat = false;
             } else {
-                if (target <= nums[end] && target > nums[mid]) {
-                    start = mid + 1;
-                } else {
-                    end = mid - 1;
-                }
+                slow = fast;//指针后移!slow,fast都向后移动一下
+                if (fast.next != null) fast = fast.next;
             }
-
         }
-        return false;
+        return dummy.next;
     }
 }
