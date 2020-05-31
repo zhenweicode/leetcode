@@ -1,26 +1,28 @@
 import java.util.*;
 
 class Solution {
-    public boolean isValidBST(TreeNode head) {
-        if (head == null) {
-            return true;
-        }
-        TreeNode p = head;
+    public void recoverTree(TreeNode root) {
         Stack<TreeNode> stack = new Stack<>();
-        int temp = Integer.MIN_VALUE;
-        while (!stack.isEmpty() || p != null) {
-            if (p != null) {
+        TreeNode firstNode = null;
+        TreeNode secondNode = null;
+        TreeNode pre = new TreeNode(Integer.MIN_VALUE);
+
+        TreeNode p = root;
+        while (p != null || !stack.isEmpty()) {
+            while (p != null) {
                 stack.push(p);
                 p = p.left;
-            } else {
-                p = stack.pop();
-                if (p.val <= temp) {
-                    return false;
-                }
-                temp = p.val;
-                p = p.right;
             }
+
+            p = stack.pop();
+            if (firstNode == null && pre.val > p.val) firstNode = pre;
+            if (firstNode != null && pre.val > p.val) secondNode = p;
+            pre = p;
+            p = p.right;
         }
-        return true;
+
+        int tmp = firstNode.val;
+        firstNode.val = secondNode.val;
+        secondNode.val = tmp;
     }
 }
