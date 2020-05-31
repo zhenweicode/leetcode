@@ -1,57 +1,43 @@
 import java.util.*;
 
-public class Solution {
-    public static void preOrderUnRecur(Node head) {
-        if (head != null) {
-            Stack<Node> stack = new Stack<Node>();
-            stack.push(head);
-            while (!stack.isEmpty()) {
-                head = stack.pop();
-                System.out.print(head.value + " ");
-                if (head.right != null) {
-                    stack.push(head.right);
-                }
-                if (head.left != null) {
-                    stack.push(head.left);
-                }
-            }
+class Solution {
+    public List<TreeNode> generateTrees(int n) {
+        if (n == 0) {
+            return new ArrayList<>();
         }
+        return getAns(1, n);
     }
 
-    public static void inOrderUnRecur(Node head) {
-        if (head != null) {
-            Stack<Node> stack = new Stack<Node>();
-            while (!stack.isEmpty() || head != null) {//打印根节点时栈为空
-                if (head != null) {
-                    stack.push(head);
-                    head = head.left;
-                } else {
-                    head = stack.pop();
-                    System.out.print(head.value + " ");
-                    head = head.right;
+    private List<TreeNode> getAns(int start, int end) {
+        List<TreeNode> ans = new ArrayList<>();
+        //此时没有数字，将 null 加入结果中
+        if (start > end) {
+            ans.add(null);
+            return ans;
+        }
+        //只有一个数字，当前数字作为一棵树加入结果中
+        if (start == end) {
+            TreeNode tree = new TreeNode(start);
+            ans.add(tree);
+            return ans;
+        }
+        //尝试每个数字作为根节点
+        for (int i = start; i <= end; i++) {
+            //得到所有可能的左子树
+            List<TreeNode> leftTrees = getAns(start, i - 1);
+            //得到所有可能的右子树
+            List<TreeNode> rightTrees = getAns(i + 1, end);
+            //左子树右子树两两组合
+            for (TreeNode leftTree : leftTrees) {
+                for (TreeNode rightTree : rightTrees) {
+                    TreeNode root = new TreeNode(i);
+                    root.left = leftTree;
+                    root.right = rightTree;
+                    //加入到最终结果中
+                    ans.add(root);
                 }
             }
         }
-    }
-
-    //h表示最近一次弹出并打印的节点
-    //c表示stack的栈顶元素
-    public static void posOrderUnRecur(Node h) {
-        if (h != null) {
-            Stack<Node> stack = new Stack<Node>();
-            stack.push(h);
-            Node c = null;
-            while (!stack.isEmpty()) {
-                c = stack.peek();
-                if (c.left != null && h != c.left && h != c.right) {//c左子树不为空，且左右子树都未打印
-                    stack.push(c.left);
-                } else if (c.right != null && h != c.right) {//c右子树不为空，且右子树都未打印
-                    stack.push(c.right);
-                } else {//c左右子树都已打印
-                    System.out.print(stack.pop().value + " ");
-                    h = c;
-                }
-            }
-        }
+        return ans;
     }
 }
