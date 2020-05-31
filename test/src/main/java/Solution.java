@@ -1,28 +1,28 @@
 import java.util.*;
 
 class Solution {
-    public void recoverTree(TreeNode root) {
-        Stack<TreeNode> stack = new Stack<>();
-        TreeNode firstNode = null;
-        TreeNode secondNode = null;
-        TreeNode pre = new TreeNode(Integer.MIN_VALUE);
-
-        TreeNode p = root;
-        while (p != null || !stack.isEmpty()) {
-            while (p != null) {
-                stack.push(p);
-                p = p.left;
-            }
-
-            p = stack.pop();
-            if (firstNode == null && pre.val > p.val) firstNode = pre;
-            if (firstNode != null && pre.val > p.val) secondNode = p;
-            pre = p;
-            p = p.right;
+    public int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
         }
-
-        int tmp = firstNode.val;
-        firstNode.val = secondNode.val;
-        secondNode.val = tmp;
+        //BFS的层次遍历思想，记录二叉树的层数，
+        //遍历完，层数即为最大深度
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        int maxDepth = 0;
+        while (!queue.isEmpty()) {
+            maxDepth++;
+            int levelSize = queue.size();
+            for (int i = 0; i < levelSize; i++) {
+                TreeNode node = queue.poll();
+                if (node.left != null) {
+                    queue.add(node.left);
+                }
+                if (node.right != null) {
+                    queue.add(node.right);
+                }
+            }
+        }
+        return maxDepth;
     }
 }
