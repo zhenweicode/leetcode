@@ -1,32 +1,41 @@
 import java.util.*;
 
 class Solution {
-    public List<List<Integer>> combine(int n, int k) {
-        List<List<Integer>> result = new ArrayList<>();
-        if (n <= 0 || k <= 0 || n < k) {
-            return result;
+    public boolean search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) {
+            return false;
         }
+        int start = 0;
+        int end = nums.length - 1;
+        int mid;
+        while (start <= end) {
+            mid = start + (end - start) / 2;  // 这么写是为了防止两个数相加超过Integer.MAX_VALUE,专业点的一般都这么写
+            if (nums[mid] == target) {
+                return true;
+            }
 
-        int[] nums = new int[n];
-        for (int i = 1; i <= n; i++) {
-            nums[i - 1] = i;
+            if (nums[start] == nums[mid]) {
+                start++;
+                continue;
+            }
+
+            //前半部分有序,注意此处用小于等于,如果nums只有两个数，start和mid就相同了，不加等号结果会出错
+            if (nums[start] <= nums[mid]) {
+                //target在前半部分
+                if (target >= nums[start] && target < nums[mid]) {
+                    end = mid - 1;
+                } else {
+                    start = mid + 1;
+                }
+            } else {
+                if (target <= nums[end] && target > nums[mid]) {
+                    start = mid + 1;
+                } else {
+                    end = mid - 1;
+                }
+            }
+
         }
-
-        backtrack(nums, 0, new ArrayList<>(), result, k);
-        return result;
-
-    }
-
-    private void backtrack(int[] nums, int begin, List<Integer> temp, List<List<Integer>> result, int k) {
-        if (temp.size() == k) {
-            result.add(new ArrayList<>(temp));
-            return;
-        }
-
-        for (int i = begin; i < nums.length; i++) {
-            temp.add(nums[i]);
-            backtrack(nums, i + 1, temp, result, k);
-            temp.remove(temp.size() - 1);
-        }
+        return false;
     }
 }
