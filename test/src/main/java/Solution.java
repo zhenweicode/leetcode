@@ -1,20 +1,41 @@
 import java.util.*;
 
-class Solution {
-    public int canCompleteCircuit(int[] gas, int[] cost) {
-        int len = gas.length;
-        int spare = 0;
-        int minSpare = Integer.MAX_VALUE;
-        int minIndex = 0;
+public class Solution {
+    private HashMap<Integer, List<String>> map = new HashMap<>();
 
-        for (int i = 0; i < len; i++) {
-            spare += gas[i] - cost[i];
-            if (spare < minSpare) {
-                minSpare = spare;
-                minIndex = i;
-            }
+    public List<String> wordBreak(String s, List<String> wordDict) {
+        return word_Break(s, new HashSet<>(wordDict), 0);
+    }
+
+    private List<String> word_Break(String s, Set<String> wordDict, int start) {
+        if (map.containsKey(start)) {
+            return map.get(start);
+        }
+        LinkedList<String> res = new LinkedList<>();
+        if (start == s.length()) {
+            res.add("");  // 标志结尾，如果不加的话，下面一步不会执行，就不会把当前结果加进去
         }
 
-        return spare < 0 ? -1 : (minIndex + 1) % len;
+        for (int end = start + 1; end <= s.length(); end++) {
+            if (wordDict.contains(s.substring(start, end))) {
+                List<String> list = word_Break(s, wordDict, end);
+                // 只有最后满足start == s.length()的list才不为空
+                for (String l : list) {
+                    res.add(s.substring(start, end) + (l.equals("") ? "" : " ") + l);
+                }
+            }
+        }
+        map.put(start, res);
+        return res;
+    }
+
+    public static void main(String[] args) {
+        List<String> result = new ArrayList<>();
+        result.add("cat");
+        result.add("cats");
+        result.add("and");
+        result.add("sand");
+        result.add("dog");
+        System.out.println(new Solution().wordBreak("catsanddog", result));
     }
 }
