@@ -1,20 +1,63 @@
 import java.util.*;
 
-class Solution {
-    public void merge(int[] nums1, int m, int[] nums2, int n) {
-        int p1 = m - 1;
-        int p2 = n - 1;
-        int p = m + n - 1;
-        while ((p1 >= 0) && (p2 >= 0)) {
-            nums1[p--] = (nums1[p1] < nums2[p2]) ? nums2[p2--] : nums1[p1--];
+public class Solution {
+
+    public List<String> restoreIpAddresses(String s) {
+        int len = s.length();
+        List<String> res = new ArrayList<>();
+        if (len > 12 || len < 4) {
+            return res;
         }
 
-        // 如果是nums1没遍历完，那么已经在正确的位置
-        // 如果是nums2没遍历完，需要拷贝
-        if (p2 >= 0) {
-            while (p2 >= 0) {
-                nums1[p--] = nums2[p2--];
+        List<String> path = new ArrayList<>(4);
+        backtrack(s, 0, 4, path, res);
+        return res;
+    }
+
+    /**
+     * @param begin  下一个遍历下标
+     * @param remain 剩余多少段还没被分割
+     */
+    private void backtrack(String s, int begin, int remain, List<String> path, List<String> res) {
+        if (begin == s.length()) {
+            if (remain == 0) {
+                res.add(String.join(".", path));
+            }
+            return;
+        }
+
+        for (int i = begin; i < begin + 3; i++) {
+            if (i >= s.length()) { // 越界
+                break;
+            }
+
+            if (remain * 3 < s.length() - i) {  // 剪枝
+                continue;
+            }
+
+            if (judgeIpSegment(s, begin, i)) {
+                String currentIpSegment = s.substring(begin, i + 1);
+                path.add(currentIpSegment);
+
+                backtrack(s, i + 1, remain - 1, path, res);
+                path.remove(path.size() - 1);
             }
         }
+    }
+
+    // 判断left到right是否符合0-255
+    private boolean judgeIpSegment(String s, int left, int right) {
+        int len = right - left + 1;
+        if (len > 1 && s.charAt(left) == '0') {
+            return false;
+        }
+
+        int res = 0;
+        while (left <= right) {
+            res = res * 10 + s.charAt(left) - '0';
+            left++;
+        }
+
+        return res >= 0 && res <= 255;
     }
 }
