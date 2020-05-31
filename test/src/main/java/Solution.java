@@ -1,28 +1,15 @@
 import java.util.*;
 
-class BSTIterator {
-    private Stack<TreeNode> stack = new Stack<>();
-
-    public BSTIterator(TreeNode root) {
-        addLeft(root);
-    }
-
-    private void addLeft(TreeNode root) {
-        while (root != null) {
-            stack.push(root);
-            root = root.left;
+public class Solution {
+    public void rotate(int[] nums, int k) {
+        int temp, previous;
+        for (int i = 0; i < k; i++) {
+            previous = nums[nums.length - 1];
+            for (int j = 0; j < nums.length; j++) {
+                temp = nums[j];
+                nums[j] = previous;
+                previous = temp;
+            }
         }
-    }
-
-    public int next() {
-        TreeNode node = stack.pop();
-        if (node.right != null) {
-            addLeft(node.right);
-        }
-        return node.val;
-    }
-
-    public boolean hasNext() {
-        return !stack.isEmpty();
     }
 }
