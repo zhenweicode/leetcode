@@ -1,12 +1,28 @@
 import java.util.*;
 
-class Solution {
-    public int trailingZeroes(int n) {
-        int count = 0;
-        while (n > 0) {
-            count += n / 5;
-            n = n / 5;
+class BSTIterator {
+    private Stack<TreeNode> stack = new Stack<>();
+
+    public BSTIterator(TreeNode root) {
+        addLeft(root);
+    }
+
+    private void addLeft(TreeNode root) {
+        while (root != null) {
+            stack.push(root);
+            root = root.left;
         }
-        return count;
+    }
+
+    public int next() {
+        TreeNode node = stack.pop();
+        if (node.right != null) {
+            addLeft(node.right);
+        }
+        return node.val;
+    }
+
+    public boolean hasNext() {
+        return !stack.isEmpty();
     }
 }
