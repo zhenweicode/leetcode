@@ -1,45 +1,32 @@
 import java.util.*;
 
-public class Solution {
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (n <= 0 || k <= 0 || n < k) {
+            return result;
+        }
 
-    public void sortColors(int[] nums) {
-        int len = nums.length;
-        if (len < 2) {
+        int[] nums = new int[n];
+        for (int i = 1; i <= n; i++) {
+            nums[i - 1] = i;
+        }
+
+        backtrack(nums, 0, new ArrayList<>(), result, k);
+        return result;
+
+    }
+
+    private void backtrack(int[] nums, int begin, List<Integer> temp, List<List<Integer>> result, int k) {
+        if (temp.size() == k) {
+            result.add(new ArrayList<>(temp));
             return;
         }
 
-        // all in [0, zero) = 0
-        // all in [zero, i) = 1
-        // all in [two, len - 1] = 2
-
-        // 循环终止条件是 i == two，那么循环可以继续的条件是 i < two
-        // 为了保证初始化的时候 [0, zero) 为空，设置 zero = 0，
-        // 所以下面遍历到 0 的时候，先交换，再加
-        int zero = 0;
-
-        // 为了保证初始化的时候 [two, len - 1] 为空，设置 two = len
-        // 所以下面遍历到 2 的时候，先减，再交换
-        int two = len;
-        int i = 0;
-        // 当 i == two 上面的三个子区间正好覆盖了全部数组
-        // 因此，循环可以继续的条件是 i < two
-        while (i < two) {
-            if (nums[i] == 0) {
-                swap(nums, i, zero);
-                zero++;
-                i++;
-            } else if (nums[i] == 1) {
-                i++;
-            } else {
-                two--;
-                swap(nums, i, two);
-            }
+        for (int i = begin; i < nums.length; i++) {
+            temp.add(nums[i]);
+            backtrack(nums, i + 1, temp, result, k);
+            temp.remove(temp.size() - 1);
         }
-    }
-
-    private void swap(int[] nums, int index1, int index2) {
-        int temp = nums[index1];
-        nums[index1] = nums[index2];
-        nums[index2] = temp;
     }
 }
