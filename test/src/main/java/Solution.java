@@ -1,57 +1,29 @@
 import java.util.*;
 
 class Solution {
-    public void setZeroes(int[][] matrix) {
-        boolean rowFlag = false;
-        //判断首行
-        for (int i = 0; i < matrix[0].length; i++) {
-            if (matrix[0][i] == 0) {
-                rowFlag = true;
-                break;
-            }
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        Stack<Integer> stack1 = new Stack<>();
+        Stack<Integer> stack2 = new Stack<>();
+        while (l1 != null) {
+            stack1.push(l1.val);
+            l1 = l1.next;
+        }
+        while (l2 != null) {
+            stack2.push(l2.val);
+            l2 = l2.next;
         }
 
-        boolean colFlag = false;
-        for (int i = 0; i < matrix.length; i++) {
-            if (matrix[i][0] == 0) {
-                colFlag = true;
-                break;
-            }
+        int carry = 0;
+        ListNode head = null;
+        while (!stack1.isEmpty() || !stack2.isEmpty() || carry > 0) {
+            int sum = carry;
+            sum += stack1.isEmpty() ? 0 : stack1.pop();
+            sum += stack2.isEmpty() ? 0 : stack2.pop();
+            ListNode node = new ListNode(sum % 10);
+            node.next = head;
+            head = node;
+            carry = sum / 10;
         }
-
-        for (int i = 1; i < matrix.length; i++) {
-            for (int j = 1; j < matrix[0].length; j++) {
-                if (matrix[i][j] == 0) {
-                    matrix[i][0] = 0;
-                    matrix[0][j] = 0;
-                }
-            }
-        }
-
-        for (int i = 1; i < matrix[0].length; i++) {
-            if (matrix[0][i] == 0) {
-                for (int j = 0; j < matrix.length; j++) {
-                    matrix[j][i] = 0;
-                }
-            }
-        }
-
-        for (int i = 1; i < matrix.length; i++) {
-            if (matrix[i][0] == 0) {
-                for (int j = 0; j < matrix[0].length; j++) {
-                    matrix[i][j] = 0;
-                }
-            }
-        }
-        if (rowFlag) {
-            for (int i = 0; i < matrix[0].length; i++) {
-                matrix[0][i] = 0;
-            }
-        }
-        if (colFlag) {
-            for (int i = 0; i < matrix.length; i++) {
-                matrix[i][0] = 0;
-            }
-        }
+        return head;
     }
 }
