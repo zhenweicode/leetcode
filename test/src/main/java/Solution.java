@@ -1,77 +1,22 @@
 import java.util.*;
 
-class MyStack {
-    private Queue<Integer> queue1 = null;
-    private Queue<Integer> queue2 = null;
-    private int flag = 0;
-
-    public MyStack() {
-        queue1 = new LinkedList<>();
-        queue2 = new LinkedList<>();
-    }
-
-    public void push(int x) {
-        if (flag == 0) {
-            queue1.offer(x);
-        } else {
-            queue2.offer(x);
-        }
-    }
-
-    public int pop() {
-        int num = 0;
-        if (flag == 0 && !queue1.isEmpty()) {
-            num = pop(queue1, queue2);
-            flag = 1;
-        } else if (flag == 1 && !queue2.isEmpty()) {
-            num = pop(queue2, queue1);
-            flag = 0;
-        } else {
-            throw new NullPointerException("stack is empty");
+class Solution {
+    public int shortestWordDistance(String[] words, String word1, String word2) {//相等时值更新一个。。。
+        int idx1 = -1, idx2 = -1, res = Integer.MAX_VALUE;
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals(word1)) {
+                idx1 = i;
+                if (idx2 >= 0) res = Math.min(res, Math.abs(idx2 - idx1));
+            }
+            if (words[i].equals(word2)) {
+                idx2 = i;
+                if (idx1 >= 0 && idx1 != idx2) {
+                    res = Math.min(res, Math.abs(idx2 - idx1));
+                }
+            }
         }
 
-        return num;
-    }
-
-    private int pop(Queue<Integer> q1, Queue<Integer> q2) {
-        if (q1.size() == 1) {
-            return q1.poll();
-        }
-
-        while (q1.size() > 1) {
-            q2.offer(q1.poll());
-        }
-
-        return q1.poll();
-    }
-
-    public int top() {
-        int num = 0;
-        if (flag == 0 && !queue1.isEmpty()) {
-            num = top(queue1, queue2);
-        } else if (flag == 1 && !queue2.isEmpty()) {
-            num = top(queue2, queue1);
-        } else {
-            throw new NullPointerException("stack is empty");
-        }
-
-        return num;
-    }
-
-    private int top(Queue<Integer> q1, Queue<Integer> q2) {
-        if (q1.size() == 1) {
-            return q1.peek();
-        }
-
-        while (q1.size() > 1) {
-            q2.offer(q1.poll());
-        }
-
-        return q1.peek();
-    }
-
-    public boolean empty() {
-        return queue1.isEmpty() && queue2.isEmpty();
+        return res;
     }
 }
 
