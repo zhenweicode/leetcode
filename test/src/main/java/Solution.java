@@ -1,37 +1,56 @@
 import java.util.*;
 
-class Solution {
-    private final String[] THOUSAND = {"", "Thousand", "Million", "Billion"};
-    private final String[] LESS_THAN_TWENTY = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
-    private final String[] HUNDRED = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
 
-    public String numberToWords(int num) {
-        if (num == 0) return "Zero";
+public class Solution {
 
-        StringBuilder sb = new StringBuilder();
-        int index = 0;
-        while (num > 0) {
-            if (num % 1000 != 0) {
-                StringBuilder tmp = new StringBuilder();
-                helper(num % 1000, tmp);
-                sb.insert(0, tmp.append(THOUSAND[index]).append(" "));
-            }
-            index++;
-            num /= 1000;
-        }
-        return sb.toString().trim();
+    // row == col对角线
+    private int diagonal;
+
+    // col = size - row - 1反对角线
+    private int reverseDiagonal;
+
+    private int[] rows;
+
+    private int[] cols;
+
+    private int size;
+
+    public Solution(int n) {
+        this.size = n;
+        this.rows = new int[n];
+        this.cols = new int[n];
     }
 
-    private void helper(int num, StringBuilder tmp) {
-        if (num == 0) return;
-        if (num < 20) {
-            tmp.append(LESS_THAN_TWENTY[num]).append(" ");
-        } else if (num < 100) {
-            tmp.append(HUNDRED[num / 10]).append(" ");
-            helper(num % 10, tmp);
-        } else {
-            tmp.append(LESS_THAN_TWENTY[num / 100]).append(" Hundred").append(" ");
-            helper(num % 100, tmp);
+    /**
+     * Player {player} makes a move at ({row}, {col}).
+     *
+     * @param row    The row of the board.
+     * @param col    The column of the board.
+     * @param player The player, can be either 1 or 2.
+     * @return The current winning condition, can be either:
+     * 0: No one wins.
+     * 1: Player 1 wins.
+     * 2: Player 2 wins.
+     */
+    public int move(int row, int col, int player) {
+        int toAdd = player == 1 ? 1 : -1;
+
+        rows[row] += toAdd;
+        cols[col] += toAdd;
+
+        if (row == col) {
+            diagonal += toAdd;
         }
+
+        if (col == size - row - 1) {
+            reverseDiagonal += toAdd;
+        }
+
+        if (Math.abs(rows[row]) == size || Math.abs(cols[col]) == size
+                || Math.abs(diagonal) == size || Math.abs(reverseDiagonal) == size) {
+            return player;
+        }
+
+        return 0;
     }
 }
