@@ -2,19 +2,25 @@ import java.util.*;
 
 
 class Solution {
-    public int compareVersion(String version1, String version2) {
-        int i = 0, j = 0;
-        while (i < version1.length() || j < version2.length()) {
-            int x = i, y = j;
-            while (x < version1.length() && version1.charAt(x) != '.') x++;
-            while (y < version2.length() && version2.charAt(y) != '.') y++;
-            int a = x == i ? 0 : Integer.parseInt(version1.substring(i, x));
-            int b = y == j ? 0 : Integer.parseInt(version2.substring(j, y));
-            if (a < b) return -1;
-            if (a > b) return 1;
-            i = x + 1;
-            j = y + 1;
+    public String reverseWords(String s) {
+        if (s == null || s.length() == 0) {
+            return s;
         }
-        return 0;
+
+        List<String> result = new ArrayList<>();
+        for (String s1 : s.split("\\s+")) {
+            result.add(reverseWord(s1));
+        }
+        return String.join(" ", result);
+    }
+
+    private String reverseWord(String s) {
+        StringBuilder b = new StringBuilder();
+        char[] c = s.toCharArray();
+        for (int i = c.length - 1; i >= 0; i--) {
+            b.append(c[i]);
+        }
+
+        return b.toString();
     }
 }
