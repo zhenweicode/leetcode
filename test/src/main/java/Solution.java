@@ -1,33 +1,28 @@
 import java.util.*;
 
 class Solution {
-    /**
-     * 帕斯卡三角形
-     * 1
-     * 1 1
-     * 1 2 1
-     * 1 3 3 1
-     * 1 4 6 4 1
-     * 1 5 10 10 5 1
-     *
-     * @param numRows
-     * @return
-     */
-    public List<List<Integer>> generate(int numRows) {
-        List<List<Integer>> list = new ArrayList<>();
-        int[][] arr = new int[numRows][numRows];
-        for (int i = 0; i < numRows; i++) {
-            List<Integer> subList = new ArrayList<>();
-            for (int j = 0; j <= i; j++) {
-                if (j == 0 || j == i) {
-                    arr[i][j] = 1;
-                } else {
-                    arr[i][j] = arr[i - 1][j - 1] + arr[i - 1][j];
+    public int maxAreaOfIsland(int[][] grid) {
+        int max = 0;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 1) {
+                    max = Math.max(dfs(grid, i, j), max);
                 }
-                subList.add(arr[i][j]);
             }
-            list.add(subList);
         }
-        return list;
+        return max;
+    }
+
+    int dfs(int[][] grid, int i, int j) {
+        if (i < 0 || i >= grid.length || j < 0 || j >= grid[0].length || grid[i][j] == 0) {
+            return 0;
+        }
+        grid[i][j] = 0;
+        int count = 1;
+        count += dfs(grid, i + 1, j);
+        count += dfs(grid, i - 1, j);
+        count += dfs(grid, i, j + 1);
+        count += dfs(grid, i, j - 1);
+        return count;
     }
 }
