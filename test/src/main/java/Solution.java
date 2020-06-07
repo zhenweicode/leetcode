@@ -1,18 +1,26 @@
 import java.util.*;
 
 
-public class Solution {
-    public int subarraySum(int[] nums, int k) {
-        int count = 0, pre = 0;
-        HashMap<Integer, Integer> mp = new HashMap<>();
-        mp.put(0, 1);
-        for (int i = 0; i < nums.length; i++) {
-            pre += nums[i];
-            if (mp.containsKey(pre - k))
-                count += mp.get(pre - k);
-            mp.put(pre, mp.getOrDefault(pre, 0) + 1);
+class Solution {
+    public int lengthOfLIS(int[] arr) {
+        if (arr == null || arr.length == 0) {
+            return 0;
         }
-        return count;
+
+        int[] dp = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (arr[i] > arr[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+            }
+        }
+
+        int res = 0;
+        for (int i = 0; i < arr.length; i++) {
+            res = Math.max(res, dp[i]);
+        }
+        return res;
     }
 }
-
