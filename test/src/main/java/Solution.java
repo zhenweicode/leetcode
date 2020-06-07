@@ -2,32 +2,48 @@ import java.util.*;
 
 
 class Solution {
-    public String removeKdigits(String num, int k) {
-        LinkedList<Character> stack = new LinkedList<>();
-        for (char digit : num.toCharArray()) {
-            while (stack.size() > 0 && k > 0 && stack.peekLast() > digit) {
-                stack.removeLast();
-                k -= 1;
+    public TreeNode deleteNode(TreeNode root, int key) {
+        if (root == null) {
+            return null;
+        }
+        if (key < root.val) {
+            // 待删除节点在左子树中
+            root.left = deleteNode(root.left, key);
+            return root;
+        } else if (key > root.val) {
+            // 待删除节点在右子树中
+            root.right = deleteNode(root.right, key);
+            return root;
+        } else {
+            // key == root.val，root 为待删除节点
+            if (root.left == null) {
+                // 返回右子树作为新的根
+                return root.right;
+            } else if (root.right == null) {
+                // 返回左子树作为新的根
+                return root.left;
+            } else {
+                // 左右子树都存在，返回后继节点（右子树最左叶子）作为新的根
+                TreeNode successor = min(root.right);
+                successor.right = deleteMin(root.right);
+                successor.left = root.left;
+                return successor;
             }
-            stack.addLast(digit);
         }
+    }
 
-        // 保持降序的删除完了，删除最后几位最大的
-        for (int i = 0; i < k; i++) {
-            stack.removeLast();
+    private TreeNode min(TreeNode node) {
+        if (node.left == null) {
+            return node;
         }
+        return min(node.left);
+    }
 
-        // build the final string, while removing the leading zeros.
-        StringBuilder ret = new StringBuilder();
-        boolean leadingZero = true;
-        for (char digit : stack) {  // 添加从尾部，从头遍历，因此是最高位
-            if (leadingZero && digit == '0') continue;
-            leadingZero = false;
-            ret.append(digit);
+    private TreeNode deleteMin(TreeNode node) {
+        if (node.left == null) {
+            return node.right;
         }
-
-        /* return the final string  */
-        if (ret.length() == 0) return "0";
-        return ret.toString();
+        node.left = deleteMin(node.left);
+        return node;
     }
 }
