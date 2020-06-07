@@ -2,36 +2,31 @@ import java.util.*;
 
 
 class Solution {
-    private int[] array;
-    private int[] original;
-
-    private Random rand = new Random();
-
-    private int randRange(int min, int max) {
-        return rand.nextInt(max - min) + min;
-    }
-
-    private void swapAt(int i, int j) {
-        int temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-
-    public Solution(int[] nums) {
-        array = nums;
-        original = nums.clone();
-    }
-
-    public int[] reset() {
-        array = original;
-        original = original.clone();
-        return original;
-    }
-
-    public int[] shuffle() {
-        for (int i = 0; i < array.length; i++) {
-            swapAt(i, randRange(i, array.length));
+    public String countAndSay(int n) {
+        if (n == 1) {
+            return "1";
         }
-        return array;
+
+        String last = "1";
+        int i = 1;
+        while (i < n) {
+            i++;
+            StringBuilder next = new StringBuilder();
+            int index = 0;
+            while (index < last.length()) {
+                char cur = last.charAt(index);
+                int count = 0;
+                while (index < last.length() && last.charAt(index) == cur) {
+                    index++; // 循环结束，index指向下一个字符，count统计数量正好
+                    count++;
+                }
+
+                next.append(count).append(cur);
+            }
+
+            last = next.toString();
+        }
+
+        return last;
     }
 }
