@@ -48,25 +48,4 @@ public class Solution {
         end++;
         return end;
     }
-
-    // 调试方法，以观察是否运行正确
-    private void printArray(int num, int[] tail) {
-        System.out.print("当前数字：" + num);
-        System.out.print("\t当前 tail 数组：");
-        int len = tail.length;
-        for (int i = 0; i < len; i++) {
-            if (tail[i] == 0) {
-                break;
-            }
-            System.out.print(tail[i] + ", ");
-        }
-        System.out.println();
-    }
-
-    public static void main(String[] args) {
-        int[] nums = new int[]{3, 5, 6, 2, 5, 4, 19, 5, 6, 7, 12};
-        Solution solution = new Solution();
-        int lengthOfLIS = solution.lengthOfLIS(nums);
-        System.out.println("最长上升子序列的长度：" + lengthOfLIS);
-    }
 }
