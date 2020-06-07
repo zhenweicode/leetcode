@@ -1,33 +1,33 @@
 import java.util.*;
 
 
-public class Solution {
+class Solution {
+    private void reverse(char[] s, int start, int end) {
+        while (start < end) {
+            char tmp = s[start];
+            s[start] = s[end];
+            s[end] = tmp;
+            start++;
+            end--;
+        }
+    }
 
-    public int findDuplicate(int[] nums) {
-        int len = nums.length;
-        int left = 1;
-        int right = len - 1;
-        while (left < right) {
-            int mid = left + (right - left) / 2;
+    public void reverseWords(char[] s) {
+        // 两次翻转即可，第一次全局翻转，第二次翻转各个单词
+        int len = s.length;
+        reverse(s, 0, len - 1);
 
-            int cnt = 0;
-            for (int num : nums) {
-                if (num <= mid) {
-                    cnt += 1;
-                }
-            }
-
-            // 根据抽屉原理，小于等于 4 的个数如果严格大于 4 个
-            // 此时重复元素一定出现在 [1, 4] 区间里
-            if (cnt > mid) {
-                // 重复元素位于区间 [left, mid]
-                right = mid;
-            } else {
-                // if 分析正确了以后，else 搜索的区间就是 if 的反面
-                // [mid + 1, right]
-                left = mid + 1;
+        int start = 0;
+        for (int i = 0; i < len; i++) {
+            if (s[i] == ' ') {
+                // 翻转前面的单词
+                reverse(s, start, i - 1);
+                start = i + 1;
             }
         }
-        return left;
+
+        // 翻转最后一个单词
+        reverse(s, start, len - 1);
     }
 }
+
