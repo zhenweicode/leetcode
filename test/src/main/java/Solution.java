@@ -1,32 +1,42 @@
 import java.util.*;
 
 class Solution {
-    private int max = 0;
-
-    public int longestUnivaluePath(TreeNode root) {
-        if (root == null) {
-            return 0;
+    public int kthSmallest(int[][] matrix, int k) {
+        int row = matrix.length;
+        int col = matrix[0].length;
+        int left = matrix[0][0];
+        int right = matrix[row - 1][col - 1];
+        while (left < right) {
+            // 每次循环都保证第K小的数在start~end之间，当start==end，第k小的数就是start
+            int mid = (left + right) / 2;
+            // 找二维矩阵中<=mid的元素总个数
+            int count = findNotBiggerThanMid(matrix, mid, row, col);
+            if (count < k) {
+                // 第k小的数在右半部分，且不包含mid
+                left = mid + 1;
+            } else {
+                // 第k小的数在左半部分，可能包含mid
+                right = mid;
+            }
         }
-        dfs(root);
-        return max;
+        return right;
     }
 
-    private int dfs(TreeNode root) {
-        if (root.left == null && root.right == null) {
-            return 0;
+    private int findNotBiggerThanMid(int[][] matrix, int mid, int row, int col) {
+        // 以列为单位找，找到每一列最后一个<=mid的数即知道每一列有多少个数<=mid
+        int i = row - 1;
+        int j = 0;
+        int count = 0;
+        while (i >= 0 && j < col) {
+            if (matrix[i][j] <= mid) {
+                // 第j列有i+1个元素<=mid
+                count += i + 1;
+                j++;
+            } else {
+                // 第j列目前的数大于mid，需要继续在当前列往上找
+                i--;
+            }
         }
-
-        int leftSize = root.left != null ? dfs(root.left) + 1 : 0;
-        int rightSize = root.right != null ? dfs(root.right) + 1 : 0;
-        if (leftSize > 0 && root.left.val != root.val) {
-            // 唯一的区别在这里，按照上题思路求出了左边边长后， 如果当前节点和左孩子节点不同值，就把边长重新赋值为0。
-            leftSize = 0;
-        }
-        if (rightSize > 0 && root.right.val != root.val) {
-            // 同上。
-            rightSize = 0;
-        }
-        max = Math.max(max, leftSize + rightSize);
-        return Math.max(leftSize, rightSize);
+        return count;
     }
 }
