@@ -1,35 +1,44 @@
 import java.util.*;
 
-class Solution {
-    public int[] findOrder(int numCourses, int[][] prerequisites) {
-        if (numCourses == 0) return new int[0];
-        int[] inDegrees = new int[numCourses];
-        // 建立入度表
-        for (int[] p : prerequisites) { // 获取每门课的入度表，其中p[1]是p[0]的前置
-            inDegrees[p[0]]++;
-        }
+class RandomizedSet {
+    private Map<Integer, Integer> dict;
+    private List<Integer> list;
+    private Random rand = new Random();
 
-        // 入度为0的节点队列
-        Queue<Integer> queue = new LinkedList<>();
-        for (int i = 0; i < inDegrees.length; i++) {
-            if (inDegrees[i] == 0) queue.offer(i);
-        }
+    public RandomizedSet() {
+        dict = new HashMap<>();
+        list = new ArrayList<>();
+    }
 
-        int count = 0;  // 记录可以学完的课程数量
-        int[] res = new int[numCourses];  // 可以学完的课程
-        // 根据提供的先修课列表，删除入度为 0 的节点
-        while (!queue.isEmpty()) {
-            int curr = queue.poll();
-            res[count++] = curr;   // 将可以学完的课程加入结果当中
-            for (int[] p : prerequisites) {  // 这里没用邻接表
-                if (p[1] == curr) {
-                    inDegrees[p[0]]--;
-                    if (inDegrees[p[0]] == 0) queue.offer(p[0]);
-                }
-            }
-        }
-        if (count == numCourses) return res;
-        return new int[0];
+    public boolean insert(int val) {
+        if (dict.containsKey(val)) return false;
+
+        dict.put(val, list.size());
+        list.add(list.size(), val);  // 不会每次触发扩容
+        return true;
+    }
+
+    /**
+     * Removes a value from the set. Returns true if the set contained the specified element.
+     */
+    public boolean remove(int val) {
+        if (!dict.containsKey(val)) return false;
+
+        // move the last element to the place idx of the element to delete
+        int lastElement = list.get(list.size() - 1);
+        int idx = dict.get(val);
+        list.set(idx, lastElement);
+        dict.put(lastElement, idx);
+        // delete the last element
+        list.remove(list.size() - 1);
+        dict.remove(val);
+        return true;
+    }
+
+    /**
+     * Get a random element from the set.
+     */
+    public int getRandom() {
+        return list.get(rand.nextInt(list.size()));
     }
 }
-
