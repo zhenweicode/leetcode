@@ -105,15 +105,12 @@ public int subarraySum(int[] nums, int k) {
         // 1. 更新当前前缀和（累加当前元素）
         currentPreSum += num;
 
-        // 2. 计算目标前缀和：preSum[i-1] = currentPreSum - k
-        int target = currentPreSum - k;
-
-        // 3. 若目标前缀和存在，累加其出现次数（这些都是满足条件的子数组）
-        if (preSumCount.containsKey(target)) {
-            count += preSumCount.get(target);
+        // 2. 若目标前缀和存在，累加其出现次数（这些都是满足条件的子数组）
+        if (preSumCount.containsKey(currentPreSum - k)) {
+            count += preSumCount.get(currentPreSum - k);
         }
 
-        // 4. 将当前前缀和存入哈希表（次数+1 或初始化为 1）
+        // 3. 将当前前缀和存入哈希表（次数+1 或初始化为 1）
         preSumCount.put(currentPreSum, preSumCount.getOrDefault(currentPreSum, 0) + 1);
     }
 
