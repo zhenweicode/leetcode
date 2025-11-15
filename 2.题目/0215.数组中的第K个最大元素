@@ -1,0 +1,113 @@
+https://leetcode.cn/problems/kth-largest-element-in-an-array/description/?envType=study-plan-v2&envId=top-100-liked
+
+# 数组中第k个最大元素（LeetCode 215）详细解法 - Java实现
+## 题目描述
+给定整数数组 `nums` 和整数 `k`，请返回数组中第 `k` 个最大的元素。请注意，你需要找的是数组排序后的第 `k` 个最大的元素，而不是第 `k` 个不同的元素。
+
+**示例**：
+- 输入：`nums = [3,2,1,5,6,4], k = 2`
+- 输出：`5`（排序后数组为 `[1,2,3,4,5,6]`，第2个最大元素是5）
+
+- 输入：`nums = [3,2,3,1,2,4,5,5,6], k = 4`
+- 输出：`4`（排序后数组为 `[1,2,2,3,3,4,5,5,6]`，第4个最大元素是4）
+
+## 核心思路
+本题的核心是 **高效找到数组中第k大的元素**，避免全排序（时间复杂度O(n log n)）的冗余开销。常用高效解法有3种，核心思想均围绕“部分排序”或“快速选择”：
+
+| 解法                | 时间复杂度       | 空间复杂度       | 特点                     |
+|---------------------|------------------|------------------|--------------------------|
+| 基于堆（优先队列）  | O(n log k)       | O(k)             | 实现简单，适合大数据量（如外存数据） |
+| 快速选择（QuickSelect） | 平均O(n)，最坏O(n²) | O(log n)（递归栈） | 平均效率最高，不稳定（依赖 pivot 选择） |
+| 计数排序/桶排序     | O(n + m)（m为数值范围） | O(m)             | 适合数值范围较小的场景   |
+
+## 解法1：基于小顶堆（优先队列）
+### 实现原理
+1. **核心思想**：用一个大小为 `k` 的小顶堆存储数组中“当前最大的k个元素”，堆顶即为这k个元素中的最小值（也就是整个数组的第k个最大元素）；
+2. **步骤**：
+   - 遍历数组，将元素加入堆；
+   - 若堆的大小超过 `k`，弹出堆顶元素（移除当前k个最大元素中的最小值）；
+   - 遍历结束后，堆顶元素即为第k个最大元素。
+
+### 关键分析
+- 小顶堆的优势：每次弹出最小元素，确保堆中始终是当前最大的k个元素，堆顶是这k个元素的“门槛”；
+- 时间复杂度：每个元素入堆/出堆的时间为O(log k)，共n个元素，总复杂度O(n log k)；
+- 空间复杂度：堆的大小为k，O(k)。
+
+### Java代码实现
+```java
+import java.util.PriorityQueue;
+
+public class FindKthLargest {
+    public int findKthLargest(int[] nums, int k) {
+        // 小顶堆：默认优先级队列是小顶堆，堆顶为最小元素
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+
+        for (int num : nums) {
+            minHeap.offer(num);
+            // 堆大小超过k，弹出最小元素（保证堆中是当前最大的k个元素）
+            if (minHeap.size() > k) {
+                minHeap.poll();
+            }
+        }
+
+        // 堆顶即为第k个最大元素
+        return minHeap.peek();
+    }
+}
+```
+
+## 解法2：快速选择（QuickSelect）
+### 实现原理
+快速排序的核心包括“哨兵划分” 和 “递归” 。
+- 哨兵划分： 以数组某个元素（一般选取首元素）为基准数，将所有小于基准数的元素移动至其左边，大于基准数的元素移动至其右边。
+- 递归： 对 左子数组 和 右子数组 递归执行 哨兵划分，直至子数组长度为 1 时终止递归，即可完成对整个数组的排序。
+
+下图展示了数组 [2,4,1,0,3,5] 的快速排序流程。
+- ![图片](../.images/2025/quicksort.png)
+
+「快速选择」：设 N 为数组长度。根据快速排序原理，如果某次哨兵划分后，基准数的索引正好是 N−k ，则意味着它就是第 k 大的数字 。此时就可以直接返回它，无需继续递归下去了。
+
+然而，对于包含大量重复元素的数组，每轮的哨兵划分都可能将数组划分为长度为 1 和 n−1 的两个部分，这种情况下快速排序的时间复杂度会退化至 O(N
+2
+ ) 。
+
+一种解决方案是使用「三路划分」，即每轮将数组划分为三个部分：小于、等于和大于基准数的所有元素。这样当发现第 k 大数字处在“等于基准数”的子数组中时，便可以直接返回该元素。
+
+为了进一步提升算法的稳健性，我们采用随机选择的方式来选定基准数。
+```
+class Solution {
+ private int quickSelect(List<Integer> nums, int k) {
+        // 随机选择基准数
+        Random rand = new Random();
+        int pivot = nums.get(rand.nextInt(nums.size()));
+        // 将大于、小于、等于 pivot 的元素划分至 big, small, equal 中
+        List<Integer> big = new ArrayList<>();
+        List<Integer> equal = new ArrayList<>();
+        List<Integer> small = new ArrayList<>();
+        for (int num : nums) {
+            if (num > pivot)
+                big.add(num);
+            else if (num < pivot)
+                small.add(num);
+            else
+                equal.add(num);
+        }
+        // 第 k 大元素在 big 中，递归划分
+        if (k <= big.size())
+            return quickSelect(big, k);
+        // 第 k 大元素在 small 中，递归划分
+        if (big.size() + equal.size() < k)
+            return quickSelect(small, k - (big.size() + equal.size()));
+        // 第 k 大元素在 equal 中，直接返回 pivot
+        return pivot;
+    }
+
+    public int findKthLargest(int[] nums, int k) {
+        List<Integer> numList = new ArrayList<>();
+        for (int num : nums) {
+            numList.add(num);
+        }
+        return quickSelect(numList, k);
+    }
+}
+```
